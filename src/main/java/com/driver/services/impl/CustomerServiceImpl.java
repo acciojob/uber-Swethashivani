@@ -49,7 +49,7 @@ public class CustomerServiceImpl implements CustomerService {
         drivers.sort(Comparator.comparingInt(Driver::getDriverId));
         Driver requiredDriver = null;
         for (Driver driver : drivers) {
-            if (driver.getCab().isAvailable()) {
+            if (driver.getCab().getAvailable()) {
                 requiredDriver = driver;
                 break;
             }
