@@ -50,9 +50,6 @@ public class CustomerServiceImpl implements CustomerService {
         //Avoid using SQL query
 
         List<Driver> drivers = driverRepository2.findAll();
-        if(drivers.size()==0){
-            throw new Exception("No cab available!");
-        }
         drivers.sort(Comparator.comparingInt(Driver::getDriverId));
         Driver requiredDriver = null;
         for (Driver driver : drivers) {
@@ -65,12 +62,9 @@ public class CustomerServiceImpl implements CustomerService {
             throw new Exception("No cab available!");
 
         Customer customer = customerRepository2.findById(customerId).get();
-        Cab cab = requiredDriver.getCab();
-        cab.setAvailable(false);
-        driverRepository2.save(requiredDriver);
-        cabRepository.save(cab);
-        TripBooking tripBooking = new TripBooking(toLocation, fromLocation, distanceInKm, TripStatus.CONFIRMED);
         requiredDriver.getCab().setAvailable(false);
+        // trip booking create
+        TripBooking tripBooking = new TripBooking(toLocation, fromLocation, distanceInKm, TripStatus.CONFIRMED);
         tripBooking.setBill(requiredDriver.getCab().getPerKmRate()*distanceInKm);
         tripBooking.setDriver(requiredDriver);
         tripBooking.setCustomer(customer);
