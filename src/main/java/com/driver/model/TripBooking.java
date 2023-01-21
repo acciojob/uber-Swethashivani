@@ -23,8 +23,11 @@ public class TripBooking {
     @JoinColumn
     private Driver driver;
 
-
-    public TripBooking(String toLocation, String fromLocation, int distanceInKm, TripStatus confirmed) {
+    public TripBooking(String toLocation, String fromLocation, int distanceInKm, TripStatus tripStatus) {
+        this.toLocation = toLocation;
+        this.fromLocation = fromLocation;
+        this.distanceInKm = distanceInKm;
+        this.tripStatus = tripStatus;
     }
 
     public int getTripBookingId() {
