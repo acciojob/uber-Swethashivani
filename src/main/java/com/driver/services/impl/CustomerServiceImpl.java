@@ -10,8 +10,10 @@ import com.driver.repository.CustomerRepository;
 import com.driver.repository.DriverRepository;
 import com.driver.repository.TripBookingRepository;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -37,7 +39,8 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void deleteCustomer(Integer customerId) {
         // Delete customer without using deleteById function
-        customerRepository2.deleteById(customerId);
+        Customer customer = customerRepository2.findById(customerId).get();
+        customerRepository2.delete(customer);
 
     }
 
@@ -71,7 +74,13 @@ public class CustomerServiceImpl implements CustomerService {
         tripBooking.setBill(requiredDriver.getCab().getPerKmRate()*distanceInKm);
         tripBooking.setDriver(requiredDriver);
         tripBooking.setCustomer(customer);
+        if(Objects.isNull(requiredDriver.getTripBookingList())) {
+            requiredDriver.setTripBookingList(new ArrayList<>());
+        }
         requiredDriver.getTripBookingList().add(tripBooking);
+        if(Objects.isNull(customer.getTripBookingList())) {
+            customer.setTripBookingList(new ArrayList<>());
+        }
         customer.getTripBookingList().add(tripBooking);
         tripBookingRepository2.save(tripBooking);
         return tripBooking;
@@ -82,6 +91,7 @@ public class CustomerServiceImpl implements CustomerService {
         //Cancel the trip having given trip Id and update TripBooking attributes accordingly
         TripBooking tripBooking = tripBookingRepository2.findById(tripId).get();
         tripBooking.setStatus(TripStatus.CANCELED);
+        tripBooking.setBill(0);
         Driver driver = tripBooking.getDriver();
         driver.getCab().setAvailable(true);
         tripBookingRepository2.save(tripBooking);
